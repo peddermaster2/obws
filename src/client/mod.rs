@@ -126,13 +126,6 @@ const OBS_STUDIO_VERSION: Comparator = Comparator {
     patch: None,
     pre: Prerelease::EMPTY,
 };
-const OBS_WEBSOCKET_VERSION: Comparator = Comparator {
-    op: Op::Tilde,
-    major: 4,
-    minor: Some(9),
-    patch: Some(1),
-    pre: Prerelease::EMPTY,
-};
 
 impl<H> ConnectConfig<H>
 where
@@ -269,10 +262,18 @@ impl Client {
             ));
         }
 
-        if !OBS_WEBSOCKET_VERSION.matches(&version.obs_websocket_version) {
+        let obs_websocket_version = Comparator {
+            op: Op::Tilde,
+            major: 4,
+            minor: Some(9),
+            patch: Some(1),
+            pre: Prerelease::new("compat").unwrap(),
+        };
+
+        if !obs_websocket_version.matches(&version.obs_websocket_version) {
             return Err(Error::ObsWebsocketVersion(
                 version.obs_websocket_version,
-                OBS_WEBSOCKET_VERSION,
+                obs_websocket_version,
             ));
         }
 
